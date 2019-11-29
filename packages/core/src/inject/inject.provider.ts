@@ -1,6 +1,5 @@
-var Symbol = require('es6-symbol');
-import { getName } from "./getName";
-import { NameProperty } from "./constants";
+var Symbol = require('es6-symbol')
+import { NameProperty } from "./constants"
 
 /**
  * A type that we can instantiate. Returns T
@@ -8,11 +7,11 @@ import { NameProperty } from "./constants";
 export type NewableType<T> = {new(...args: any[]): T}
 
 export class InjectProvider {
-    private static _instance: InjectProvider;
+    private static _instance: InjectProvider
 
-    private injectables: any = {};
+    private injectables: any = {}
 
-    private readonly SYMBOL_ID = Symbol('Id');
+    private readonly SYMBOL_ID = Symbol('Id')
 
     private constructor() { }
 
@@ -25,29 +24,7 @@ export class InjectProvider {
      * @memberOf InjectProvider
      */
     public static get Instance(): InjectProvider {
-        return this._instance || (this._instance = new this());
-    }
-
-    /**
-     * Check a class for a symbol id
-     * 
-     * @param {NewableType<any>} instanceType Class to check for Id
-     * @returns {boolean}
-     */
-    public hasId(instanceType: NewableType<any>): boolean {
-        return this.getId(instanceType) != null;
-    }
-
-    /**
-     * Get a classes symbol id
-     * 
-     * @param {NewableType<any>} instanceType Class to get symbol id for
-     * @returns {Symbol} Symbol id of the class
-     * 
-     * @memberOf InjectProvider
-     */
-    public getId(instanceType: NewableType<any>): any {
-        return (<any>instanceType)[this.SYMBOL_ID];
+        return this._instance || (this._instance = new this())
     }
 
     /**
@@ -58,8 +35,12 @@ export class InjectProvider {
      * 
      * @memberOf InjectProvider
      */
-    public setName(namespace: string, instanceType: NewableType<any>): void {
-        (<any>instanceType)[NameProperty] = (namespace != '' ? namespace + '.' : '') + getName(<any>instanceType);
+    public setName(instanceType: NewableType<any>): void {
+        (<any>instanceType)[NameProperty] = InjectProvider.Instance.getName(<any>instanceType)
+    }
+
+    public getName(target: Function): string {
+        return (<any>target)[NameProperty] || (<any>target).name || (<any>target).toString().match(/^function\s*([^\s(]+)/)[1]
     }
 
     /**
@@ -71,15 +52,16 @@ export class InjectProvider {
      * 
      * @memberOf InjectProvider
      */
-    public get<T>(instanceType: NewableType<T>): T | null {
-        var key = (<any>instanceType)[this.SYMBOL_ID];
+    public get<T>(instanceType: NewableType<T>): T | undefined {
+        var key = (<any>instanceType)[this.SYMBOL_ID]
         if (this.injectables[key] != null) {
             if (typeof this.injectables[key] === 'function') {
-                return this.injectables[key] = new (this.injectables[key])();
+                console.log(this.get.toString())
+                return this.injectables[key] = new (this.injectables[key])()
             }
-            return this.injectables[key];
+            return this.injectables[key]
         }
-        return null;
+        return undefined
     }
 
     /**
@@ -93,9 +75,9 @@ export class InjectProvider {
      */
     public register<T extends Function>(instanceType: NewableType<T>, key?: any) {
         if (key == null) {
-            key = (<any>instanceType)[this.SYMBOL_ID] || Symbol(getName(instanceType));
+            key = (<any>instanceType)[this.SYMBOL_ID] || Symbol(InjectProvider.Instance.getName(instanceType))
         }
-        (<any>instanceType)[this.SYMBOL_ID] = key;
-        this.injectables[key] = instanceType;
+        (<any>instanceType)[this.SYMBOL_ID] = key
+        this.injectables[key] = instanceType
     }
 }

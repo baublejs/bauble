@@ -1,43 +1,54 @@
-import "reflect-metadata";
-import { InjectProvider } from "./inject.provider";
-import { getOptions } from "./getOptions";
-import { ParamTypes } from "./constants";
-import { getName } from "./getName";
+import "reflect-metadata"
+import { InjectProvider } from "./inject.provider"
+import { getOptions } from "./getOptions"
+import { ParamTypes } from "./constants"
 
 function getNewConstructor(constructor: Function, params: any[]) {
     return function(this: any, ...args: any[]) {
-        var newParams = params.slice(0);
-        for (let j = 0; j < args.length; j++) {
-            let arg = args[j];
-            for (let i = 0; i < newParams.length; i++) {
-                if (newParams[i] === void 0) {
-                    (<any>newParams)[i] = arg;
-                    break;
+        const newArgs = params.slice(0)
+        for (const arg of args) {
+            for (let i = 0; i < newArgs.length; i++) {
+                if (typeof newArgs[i] === 'undefined') {
+                    (<any>newArgs)[i] = arg
+                    break
                 }
             }
         }
-        return constructor.apply(this, newParams);
+        return Reflect.construct(constructor, newArgs)
     }
 }
 
-function getParams(excludes: any, metadata: any) {
-    var params: any[] = [];
-    for (let i = 0; i < metadata.length; i++) {
-        let meta = metadata[i];
-        var key = getName(meta);
-        if (excludes[key] !== true) {
-            params.push(InjectProvider.Instance.get(meta));
-        } else {
-            params.push(void 0);
+function getParams(excludes: any[] | undefined, metadata: any) {
+    excludes = [...(excludes || []), String, Number, Object, Array, Boolean]
+    const params: any[] = [],
+        excludedParams: any[] = []
+    for (const meta of metadata) {
+        if (excludes) {
+            let found = false
+            for (const exclude of excludes) {
+                if (exclude === meta) {
+                    found = true
+                    excludedParams.push(meta)
+                    params.push(undefined)
+                    break
+                }
+            }
+            if (!found) {
+                params.push(InjectProvider.Instance.get(meta))
+            }
         }
     }
-    return params;
+    return {params, excludedParams}
 }
 
 function setupNewConstructorPrototype(originalConstructor: Function, newConstructor: Function) {
-    newConstructor.prototype = Object.create(originalConstructor.prototype);
-    newConstructor.prototype.constructor = originalConstructor;
-    Object.defineProperty(newConstructor, 'name', { value: getName(<any>originalConstructor), enumerable: false, writable: false });
+    newConstructor.prototype = Object.create(originalConstructor.prototype)
+    newConstructor.prototype.constructor = originalConstructor
+    Object.defineProperty(newConstructor, 'name', {
+        value: InjectProvider.Instance.getName(<any>originalConstructor),
+        enumerable: false,
+        writable: false
+    })
 }
 
 /**
@@ -49,24 +60,17 @@ function setupNewConstructorPrototype(originalConstructor: Function, newConstruc
  * @returns {Function} New constructor
  */
 function Inject(options: IInjectableOptions, constructor: Function) {
-    var metadata = Reflect.getMetadata(ParamTypes, constructor);
+    const metadata = Reflect.getMetadata(ParamTypes, constructor)
     if (metadata != null) {
-        var params = getParams(options.exclude, metadata);
-        var newConstructor = getNewConstructor(constructor, params);
-        setupNewConstructorPrototype(constructor, newConstructor);
+        const params = getParams(options.exclude, metadata)
+        const newConstructor = getNewConstructor(constructor, params.params)
+        setupNewConstructorPrototype(constructor, newConstructor)
 
-        var newMetadata = [];
-        for (let i = 0; i < metadata.length; i++) {
-            let meta = metadata[i];
-            if ((<any>options.exclude)[getName(meta)] === true) {
-                newMetadata.push(meta);
-            }
-        }
-        Reflect.defineMetadata(ParamTypes, newMetadata, newConstructor);
+        Reflect.defineMetadata(ParamTypes, params.excludedParams, newConstructor)
 
-        return <any>newConstructor;
+        return <any>newConstructor
     } else {
-        return <any>constructor;
+        return <any>constructor
     }
 }
 
@@ -78,16 +82,16 @@ function Inject(options: IInjectableOptions, constructor: Function) {
  * @returns Decorator
  */
 export function Injectable(options: IInjectableOptions = {}) {
-    options = getOptions(options, defaultOptions);
+    options = getOptions(options, defaultOptions)
     return function(constructor: Function) {
-        InjectProvider.Instance.setName(<string>options.namespace, <any>constructor);
+        InjectProvider.Instance.setName(<any>constructor)
 
         if (options.inject === true) {
-            constructor = Inject(options, constructor);
+            constructor = Inject(options, constructor)
         }
 
-        InjectProvider.Instance.register(<any>constructor);
-        return <any>constructor;
+        InjectProvider.Instance.register(<any>constructor)
+        return <any>constructor
     }
 }
 
@@ -96,24 +100,15 @@ export function Injectable(options: IInjectableOptions = {}) {
  * 
  * @export
  * @interface IInjectableOptions
- * @property {string} namespace Namespace of the Injectable
- * @property {{[type: string]: boolean}} exclude Excluded namespaced types for injection, true to exclude
+ * @property {any[]} exclude Types to exclude from injection
  * @property {boolean} inject Whether or not the class should have injectables injected into it
  */
 export interface IInjectableOptions {
-    namespace?: string;
-    exclude?: {[type: string]: boolean};
-    inject?: boolean;
+    exclude?: any[]
+    inject?: boolean
 }
 
 const defaultOptions: IInjectableOptions = {
-    namespace: '',
-    exclude: {
-        String: true,
-        Number: true,
-        Object: true,
-        Array: true,
-        Boolean: true
-    },
+    exclude: [],
     inject: true
 }

@@ -1,7 +1,7 @@
 import { Controller } from "./controller/controller"
 import { HttpMethod } from "./httpMethod"
 import { Route } from "./route/route"
-import { Express } from "express";
+import { Express } from "express"
 const Symbol = require('es6-symbol')
 
 let keyIndex = 1

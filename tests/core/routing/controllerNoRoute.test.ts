@@ -1,4 +1,4 @@
-import { Bauble, Controller } from '../../packages/core/src/index'
+import { Bauble, Controller } from '../../../packages/core/src/index'
 import * as express from 'express'
 import * as request from 'supertest'
 import { Server } from 'http'
@@ -20,7 +20,7 @@ beforeAll(async () => {
     })
 })
 
-describe('test verb decorators', () => {
+describe('controller no route', () => {
     it('get', async () => {
         await request(server)
             .get('')

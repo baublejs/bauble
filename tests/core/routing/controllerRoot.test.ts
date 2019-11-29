@@ -1,4 +1,4 @@
-import { Bauble, Controller, Route, HttpMethod } from '../../packages/core/src/index'
+import { Bauble, Controller, Route, HttpMethod } from '../../../packages/core/src/index'
 import * as express from 'express'
 import * as request from 'supertest'
 import { Server } from 'http'
@@ -29,7 +29,7 @@ beforeAll(async () => {
     })
 })
 
-describe('test controller root dir', () => {
+describe('controller root route', () => {
     it('should have root', async () => {
         await request(server)
             .get('/api/test/index')
