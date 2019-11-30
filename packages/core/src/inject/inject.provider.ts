@@ -1,5 +1,7 @@
 const Symbol = require('es6-symbol')
-import { NameProperty } from "./constants"
+import { KeyProperty } from "./constants"
+
+let keyIndex = 0
 
 /**
  * A type that we can instantiate. Returns T
@@ -28,19 +30,18 @@ export class InjectProvider {
     }
 
     /**
-     * Set the name a of a newable type
+     * Set the key a of a newable type
      * 
-     * @param {string} namespace Namespace to prepend
      * @param {NewableType<any>} instanceType Newable instance type
      * 
      * @memberOf InjectProvider
      */
-    public setName(instanceType: NewableType<any>): void {
-        (<any>instanceType)[NameProperty] = InjectProvider.instance.getName(<any>instanceType)
+    public setKey(instanceType: NewableType<any>): void {
+        (<any>instanceType)[KeyProperty] = InjectProvider.instance.getKey(<any>instanceType)
     }
 
-    public getName(target: Function): string {
-        return (<any>target)[NameProperty] || (<any>target).name
+    public getKey(target: Function): string {
+        return (<any>target)[KeyProperty] || ++keyIndex
     }
 
     /**
@@ -72,7 +73,7 @@ export class InjectProvider {
      * @memberOf InjectProvider
      */
     public register<T extends Function>(instanceType: NewableType<T>) {
-        const key = (<any>instanceType)[this.SYMBOL_ID] || Symbol(InjectProvider.instance.getName(instanceType))
+        const key = (<any>instanceType)[this.SYMBOL_ID] || Symbol(InjectProvider.instance.getKey(instanceType))
         ;(<any>instanceType)[this.SYMBOL_ID] = key
         this.injectables[key] = instanceType
     }

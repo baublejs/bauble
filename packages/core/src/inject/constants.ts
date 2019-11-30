@@ -1,4 +1,4 @@
 const Symbol = require('es6-symbol')
 
-export const NameProperty = Symbol('name')
+export const KeyProperty = Symbol('key')
 export const ParamTypes = "design:paramtypes"

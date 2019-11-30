@@ -42,7 +42,7 @@ function setupNewConstructorPrototype(originalConstructor: Function, newConstruc
     newConstructor.prototype = Object.create(originalConstructor.prototype)
     newConstructor.prototype.constructor = originalConstructor
     Object.defineProperty(newConstructor, 'name', {
-        value: InjectProvider.instance.getName(<any>originalConstructor),
+        value: InjectProvider.instance.getKey(<any>originalConstructor),
         enumerable: false,
         writable: false
     })
@@ -81,7 +81,7 @@ function Inject(options: IInjectableOptionsDefaulted, constructor: Function) {
 export function Injectable(options?: IInjectableOptions) {
     const opts: IInjectableOptionsDefaulted = InjectProvider.instance.getOptions(options, defaultOptions)
     return function(constructor: Function) {
-        InjectProvider.instance.setName(<any>constructor)
+        InjectProvider.instance.setKey(<any>constructor)
 
         if (opts.inject === true) {
             constructor = Inject(opts, constructor)
