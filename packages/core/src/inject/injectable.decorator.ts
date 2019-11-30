@@ -1,6 +1,5 @@
 import "reflect-metadata"
 import { InjectProvider } from "./inject.provider"
-import { getOptions } from "./getOptions"
 import { ParamTypes } from "./constants"
 
 function getNewConstructor(constructor: Function, params: any[]) {
@@ -18,24 +17,22 @@ function getNewConstructor(constructor: Function, params: any[]) {
     }
 }
 
-function getParams(excludes: any[] | undefined, metadata: any) {
-    excludes = [...(excludes || []), String, Number, Object, Array, Boolean]
+function getParams(excludes: any[], metadata: any) {
+    excludes = [...excludes, String, Number, Object, Array, Boolean]
     const params: any[] = [],
         excludedParams: any[] = []
     for (const meta of metadata) {
-        if (excludes) {
-            let found = false
-            for (const exclude of excludes) {
-                if (exclude === meta) {
-                    found = true
-                    excludedParams.push(meta)
-                    params.push(undefined)
-                    break
-                }
+        let found = false
+        for (const exclude of excludes) {
+            if (exclude === meta) {
+                found = true
+                excludedParams.push(meta)
+                params.push(undefined)
+                break
             }
-            if (!found) {
-                params.push(InjectProvider.Instance.get(meta))
-            }
+        }
+        if (!found) {
+            params.push(InjectProvider.instance.get(meta))
         }
     }
     return {params, excludedParams}
@@ -45,7 +42,7 @@ function setupNewConstructorPrototype(originalConstructor: Function, newConstruc
     newConstructor.prototype = Object.create(originalConstructor.prototype)
     newConstructor.prototype.constructor = originalConstructor
     Object.defineProperty(newConstructor, 'name', {
-        value: InjectProvider.Instance.getName(<any>originalConstructor),
+        value: InjectProvider.instance.getName(<any>originalConstructor),
         enumerable: false,
         writable: false
     })
@@ -59,7 +56,7 @@ function setupNewConstructorPrototype(originalConstructor: Function, newConstruc
  * @param {Function} constructor Constructor to inject into
  * @returns {Function} New constructor
  */
-function Inject(options: IInjectableOptions, constructor: Function) {
+function Inject(options: IInjectableOptionsDefaulted, constructor: Function) {
     const metadata = Reflect.getMetadata(ParamTypes, constructor)
     if (metadata != null) {
         const params = getParams(options.exclude, metadata)
@@ -81,16 +78,16 @@ function Inject(options: IInjectableOptions, constructor: Function) {
  * @param {IInjectableOptions} [options={}] Options
  * @returns Decorator
  */
-export function Injectable(options: IInjectableOptions = {}) {
-    options = getOptions(options, defaultOptions)
+export function Injectable(options?: IInjectableOptions) {
+    const opts: IInjectableOptionsDefaulted = InjectProvider.instance.getOptions(options, defaultOptions)
     return function(constructor: Function) {
-        InjectProvider.Instance.setName(<any>constructor)
+        InjectProvider.instance.setName(<any>constructor)
 
-        if (options.inject === true) {
-            constructor = Inject(options, constructor)
+        if (opts.inject === true) {
+            constructor = Inject(opts, constructor)
         }
 
-        InjectProvider.Instance.register(<any>constructor)
+        InjectProvider.instance.register(<any>constructor)
         return <any>constructor
     }
 }
@@ -108,7 +105,12 @@ export interface IInjectableOptions {
     inject?: boolean
 }
 
-const defaultOptions: IInjectableOptions = {
+export interface IInjectableOptionsDefaulted {
+    exclude: any[]
+    inject: boolean
+}
+
+const defaultOptions: IInjectableOptionsDefaulted = {
     exclude: [],
     inject: true
 }

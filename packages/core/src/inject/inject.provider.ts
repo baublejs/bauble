@@ -1,4 +1,4 @@
-var Symbol = require('es6-symbol')
+const Symbol = require('es6-symbol')
 import { NameProperty } from "./constants"
 
 /**
@@ -23,7 +23,7 @@ export class InjectProvider {
      * @type {InjectProvider}
      * @memberOf InjectProvider
      */
-    public static get Instance(): InjectProvider {
+    public static get instance(): InjectProvider {
         return this._instance || (this._instance = new this())
     }
 
@@ -36,11 +36,11 @@ export class InjectProvider {
      * @memberOf InjectProvider
      */
     public setName(instanceType: NewableType<any>): void {
-        (<any>instanceType)[NameProperty] = InjectProvider.Instance.getName(<any>instanceType)
+        (<any>instanceType)[NameProperty] = InjectProvider.instance.getName(<any>instanceType)
     }
 
     public getName(target: Function): string {
-        return (<any>target)[NameProperty] || (<any>target).name || (<any>target).toString().match(/^function\s*([^\s(]+)/)[1]
+        return (<any>target)[NameProperty] || (<any>target).name
     }
 
     /**
@@ -53,10 +53,9 @@ export class InjectProvider {
      * @memberOf InjectProvider
      */
     public get<T>(instanceType: NewableType<T>): T | undefined {
-        var key = (<any>instanceType)[this.SYMBOL_ID]
+        const key = (<any>instanceType)[this.SYMBOL_ID]
         if (this.injectables[key] != null) {
             if (typeof this.injectables[key] === 'function') {
-                console.log(this.get.toString())
                 return this.injectables[key] = new (this.injectables[key])()
             }
             return this.injectables[key]
@@ -69,15 +68,26 @@ export class InjectProvider {
      * 
      * @template T Type of injectable
      * @param {NewableType<T>} instanceType Instance type to create
-     * @param {Symbol?} key Unique ID for instance. Use when defining a new constructor for an existing injectable
      * 
      * @memberOf InjectProvider
      */
-    public register<T extends Function>(instanceType: NewableType<T>, key?: any) {
-        if (key == null) {
-            key = (<any>instanceType)[this.SYMBOL_ID] || Symbol(InjectProvider.Instance.getName(instanceType))
-        }
-        (<any>instanceType)[this.SYMBOL_ID] = key
+    public register<T extends Function>(instanceType: NewableType<T>) {
+        const key = (<any>instanceType)[this.SYMBOL_ID] || Symbol(InjectProvider.instance.getName(instanceType))
+        ;(<any>instanceType)[this.SYMBOL_ID] = key
         this.injectables[key] = instanceType
+    }
+
+    public getOptions<T, TReturn>(options: T, defaults: T): TReturn {
+        if (options != null && typeof options === 'object') {
+            for (const key of Object.keys(defaults)) {
+                if (typeof options[key] === "object") {
+                    options[key] = this.getOptions(<any>options[key], <any>defaults[key])
+                } else {
+                    options[key] = options[key] !== undefined ? options[key] : defaults[key]
+                }
+            }
+            return options as any
+        }
+        return defaults as any
     }
 }
