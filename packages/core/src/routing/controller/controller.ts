@@ -3,11 +3,11 @@ import { Route } from "../route/route"
 export class Controller {
     constructor() { }
 
-    BasePath?: string
-    Instance: any
-    Routes: Route[] = []
+    basePath?: string
+    instance: any
+    routes: Route[] = []
 
     addRoute(route: Route) {
-        this.Routes.push(route)
+        this.routes.push(route)
     }
 }

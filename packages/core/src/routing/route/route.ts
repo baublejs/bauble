@@ -2,12 +2,12 @@ import { HttpMethod } from "../httpMethod"
 
 export class Route {
     constructor(method: HttpMethod, path: string, action: string) {
-        this.Method = method
-        this.Path = path
-        this.Action = action
+        this.method = method
+        this.path = path
+        this.action = action
     }
 
-    Method: HttpMethod
-    Path: string
-    Action: string
+    method: HttpMethod
+    path: string
+    action: string
 }

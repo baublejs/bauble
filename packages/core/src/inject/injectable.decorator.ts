@@ -41,11 +41,6 @@ function getParams(excludes: any[], metadata: any) {
 function setupNewConstructorPrototype(originalConstructor: Function, newConstructor: Function) {
     newConstructor.prototype = Object.create(originalConstructor.prototype)
     newConstructor.prototype.constructor = originalConstructor
-    Object.defineProperty(newConstructor, 'name', {
-        value: InjectProvider.instance.getKey(<any>originalConstructor),
-        enumerable: false,
-        writable: false
-    })
 }
 
 /**

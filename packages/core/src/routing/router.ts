@@ -43,10 +43,9 @@ export class Router {
     public registerController<T extends Function>(instanceType: NewableType<T>, basePath?: string) {
         let key = instanceType.prototype[this.SYMBOL_ID] || this.getKey()
         if (this.controllers[key] == null) return
-            let controller = this.controllers[key]
-            controller.BasePath = basePath
-            controller.Instance = new (instanceType)()
-        
+        let controller = this.controllers[key]
+        controller.basePath = basePath
+        controller.instance = new (instanceType)()
     }
 
     public registerRoute(targetPrototype: any, httpMethod: HttpMethod, path: string, actionKey: string) {
@@ -59,11 +58,11 @@ export class Router {
         const controllers = Router.instance.getControllers()
         for (let key of Object.keys(controllers)) {
             let controller = controllers[key]
-            for (let route of controller.Routes) {
-                let action = HttpMethod[route.Method].toLowerCase()
-                let path = `${Router.fixPath(controller.BasePath || '')}${Router.fixPath(route.Path)}`
+            for (let route of controller.routes) {
+                let action = HttpMethod[route.method].toLowerCase()
+                let path = `${Router.fixPath(controller.basePath || '')}${Router.fixPath(route.path)}`
                 //@ts-ignore
-                app[action](path, controller.Instance[route.Action])
+                app[action](path, controller.instance[route.action].bind(controller.instance))
             }
         }
     }
