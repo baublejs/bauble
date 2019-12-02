@@ -1,4 +1,4 @@
-name: Node CI
+name: Core - Test
 
 on: [push]
 
@@ -21,6 +21,9 @@ jobs:
       run: |
         npm ci
         npm run build --if-present
+        cd packages/core
+        npm ci
+        cd ../../
         npm test
       env:
         CI: true
