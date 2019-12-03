@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "coverage": "jest --coverage",
-    "coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
+    "coverage": "jest --coverage"
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +14,6 @@
     "@types/jest": "^24.0.23",
     "@types/request-promise": "^4.1.45",
     "@types/supertest": "^2.0.8",
-    "coveralls": "^3.0.9",
     "express": "^4.17.1",
     "jest": "^24.9.0",
     "supertest": "^4.0.2",
