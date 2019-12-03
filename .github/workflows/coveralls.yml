@@ -1,6 +1,6 @@
 name: Coveralls
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -24,8 +24,7 @@ jobs:
         cd packages/core
         npm ci
         cd ../../
-        npm run coveralls
+        npm run coverage
       env:
         CI: true
-        COVERALLS_REPO_TOKEN: "${{ secrets.coveralls_token }}"
-        COVERALLS_GIT_BRANCH: "${{ github.ref }}"
+        github-token: ${{ secrets.GITHUB_TOKEN }}
