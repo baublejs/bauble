@@ -10,6 +10,7 @@ export abstract class Bauble {
     }
 
     static bindRoutes(app: Express) {
+        throw new Error('ERROR')
         Router.instance.bindRoutes(app)
     }
 }
