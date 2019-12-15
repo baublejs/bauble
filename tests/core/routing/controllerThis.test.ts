@@ -5,7 +5,7 @@ import { Server } from 'http'
 
 @Controller('api/test')
 class TController {
-    @Route(HttpMethod.GET)
+    @Route(HttpMethod.Get)
     index(req: express.Request, res: express.Response) {
         res.json(!!this.index)
     }

@@ -13,7 +13,7 @@ class TInjectable {
 class TController {
     constructor(public injected: TInjectable) {}
 
-    @Route(HttpMethod.GET)
+    @Route(HttpMethod.Get)
     index(req: express.Request, res: express.Response) {
         res.json(!!this.injected.member)
     }

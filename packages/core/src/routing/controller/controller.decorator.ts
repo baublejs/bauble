@@ -4,7 +4,7 @@ import { Injectable } from "../../inject/injectable.decorator"
 
 export function Controller(basePath?: string) {
     return function(constructor: Function) {
-        Router.instance.registerController(Injectable()(<any>constructor), basePath)
+        Router.registerController(Injectable()(<any>constructor), basePath)
         return constructor as any
     }
 }

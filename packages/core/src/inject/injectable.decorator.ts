@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import { InjectProvider } from "./inject.provider"
+import { InjectService } from "./inject.service"
 import { ParamTypes } from "./constants"
 
 function getNewConstructor(constructor: Function, params: any[]) {
@@ -32,7 +32,7 @@ function getParams(excludes: any[], metadata: any) {
             }
         }
         if (!found) {
-            params.push(InjectProvider.instance.get(meta))
+            params.push(InjectService.get(meta))
         }
     }
     return {params, excludedParams}
@@ -74,15 +74,15 @@ function Inject(options: IInjectableOptionsDefaulted, constructor: Function) {
  * @returns Decorator
  */
 export function Injectable(options?: IInjectableOptions) {
-    const opts: IInjectableOptionsDefaulted = InjectProvider.instance.getOptions(options, defaultOptions)
+    const opts: IInjectableOptionsDefaulted = InjectService.getOptions(options, defaultOptions)
     return function(constructor: Function) {
-        InjectProvider.instance.setKey(<any>constructor)
+        InjectService.setKey(<any>constructor)
 
         if (opts.inject === true) {
             constructor = Inject(opts, constructor)
         }
 
-        InjectProvider.instance.register(<any>constructor)
+        InjectService.register(<any>constructor)
         return <any>constructor
     }
 }

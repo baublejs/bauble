@@ -8,39 +8,23 @@ let keyIndex = 0
  */
 export type NewableType<T> = {new(...args: any[]): T}
 
-export class InjectProvider {
-    private static _instance: InjectProvider
+export abstract class InjectService {
+    private static injectables: any = {}
 
-    private injectables: any = {}
-
-    private readonly SYMBOL_ID = Symbol('Id')
-
-    private constructor() { }
-
-    /**
-     * Instance of InjectProvider
-     * 
-     * @readonly
-     * @static
-     * @type {InjectProvider}
-     * @memberOf InjectProvider
-     */
-    public static get instance(): InjectProvider {
-        return this._instance || (this._instance = new this())
-    }
+    private static readonly SYMBOL_ID = Symbol('Id')
 
     /**
      * Set the key a of a newable type
      * 
      * @param {NewableType<any>} instanceType Newable instance type
      * 
-     * @memberOf InjectProvider
+     * @memberOf InjectService
      */
-    public setKey(instanceType: NewableType<any>): void {
-        (<any>instanceType)[KeyProperty] = InjectProvider.instance.getKey(<any>instanceType)
+    public static setKey(instanceType: NewableType<any>): void {
+        (<any>instanceType)[KeyProperty] = InjectService.getKey(<any>instanceType)
     }
 
-    public getKey(target: Function): string {
+    public static getKey(target: Function): string {
         return (<any>target)[KeyProperty] || ++keyIndex
     }
 
@@ -51,9 +35,9 @@ export class InjectProvider {
      * @param {NewableType<any>} instanceType Instance type to get
      * @returns Instance of injectable or null
      * 
-     * @memberOf InjectProvider
+     * @memberOf InjectService
      */
-    public get<T>(instanceType: NewableType<T>): T | undefined {
+    public static get<T>(instanceType: NewableType<T>): T | undefined {
         const key = (<any>instanceType)[this.SYMBOL_ID]
         if (this.injectables[key] != null) {
             if (typeof this.injectables[key] === 'function') {
@@ -70,15 +54,15 @@ export class InjectProvider {
      * @template T Type of injectable
      * @param {NewableType<T>} instanceType Instance type to create
      * 
-     * @memberOf InjectProvider
+     * @memberOf InjectService
      */
-    public register<T extends Function>(instanceType: NewableType<T>) {
-        const key = (<any>instanceType)[this.SYMBOL_ID] || Symbol(InjectProvider.instance.getKey(instanceType))
+    public static register<T extends Function>(instanceType: NewableType<T>) {
+        const key = (<any>instanceType)[this.SYMBOL_ID] || Symbol(InjectService.getKey(instanceType))
         ;(<any>instanceType)[this.SYMBOL_ID] = key
         this.injectables[key] = instanceType
     }
 
-    public getOptions<T, TReturn>(options: T, defaults: T): TReturn {
+    public static getOptions<T, TReturn>(options: T, defaults: T): TReturn {
         if (options != null && typeof options === 'object') {
             for (const key of Object.keys(defaults)) {
                 if (typeof options[key] === "object") {

@@ -4,7 +4,10 @@ import { Route } from "./route/route"
 import { Express } from "express"
 const Symbol = require('es6-symbol')
 
-let keyIndex = 1
+function* getKeyIndex() {
+    let i = 0
+    while (true) yield ++i
+}
 
 /**
  * A type that we can instantiate. Returns T
@@ -12,50 +15,31 @@ let keyIndex = 1
 export type NewableType<T> = {new(...args: any[]): T}
 
 export class Router {
-    private static _instance: Router
+    private static controllers: {[key: string]: Controller} = {}
 
-    private controllers: {[key: string]: Controller} = {}
+    private static readonly SYMBOL_ID = Symbol('Id')
 
-    private readonly SYMBOL_ID = Symbol('Id')
-
-    private constructor() { }
-
-    /**
-     * Instance of Router
-     * 
-     * @readonly
-     * @static
-     * @type {Router}
-     * @memberOf Router
-     */
-    public static get instance(): Router {
-        return this._instance || (this._instance = new this())
-    }
-
-    public getControllers() {
+    public static getControllers() {
         return this.controllers
     }
 
-    private getKey() {
-        return keyIndex++
-    }
-
-    public registerController<T extends Function>(instanceType: NewableType<T>, basePath?: string) {
-        let key = instanceType.prototype[this.SYMBOL_ID] || this.getKey()
+    public static registerController<T extends Function>(instanceType: NewableType<T>, basePath?: string) {
+        let key = instanceType.prototype[this.SYMBOL_ID] || getKeyIndex()
         if (this.controllers[key] == null) return
         let controller = this.controllers[key]
         controller.basePath = basePath
         controller.instance = new (instanceType)()
     }
 
-    public registerRoute(targetPrototype: any, httpMethod: HttpMethod, path: string, actionKey: string) {
-        let key = targetPrototype[this.SYMBOL_ID] = targetPrototype[this.SYMBOL_ID] || this.getKey()
+    public static registerRoute(targetPrototype: any, httpMethod: HttpMethod, path: string, actionKey: string) {
+        let key = targetPrototype[this.SYMBOL_ID] = targetPrototype[this.SYMBOL_ID] || getKeyIndex()
         if (this.controllers[key] == null) this.controllers[key] = new Controller()
         this.controllers[key].addRoute(new Route(httpMethod, path, actionKey))
     }
 
-    public bindRoutes(app: Express) {
-        const controllers = Router.instance.getControllers()
+
+    public static bindRoutes(app: Express) {
+        const controllers = Router.getControllers()
         for (let key of Object.keys(controllers)) {
             let controller = controllers[key]
             for (let route of controller.routes) {
