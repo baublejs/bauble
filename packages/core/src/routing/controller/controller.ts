@@ -4,7 +4,7 @@ export class Controller {
     constructor() { }
 
     basePath?: string
-    instance: any
+    instance: {[key: string]: Function} = {}
     routes: Route[] = []
 
     addRoute(route: Route) {

@@ -2,6 +2,8 @@ import { Controller } from "./controller/controller"
 import { HttpMethod } from "./httpMethod"
 import { Route } from "./route/route"
 import { Express } from "express"
+import { Response, Request } from "express-serve-static-core"
+import { Response as BaubleResponse } from './response/response'
 const Symbol = require('es6-symbol')
 
 function* getKeyIndex() {
@@ -28,7 +30,7 @@ export class Router {
         if (this.controllers[key] == null) return
         let controller = this.controllers[key]
         controller.basePath = basePath
-        controller.instance = new (instanceType)()
+        controller.instance = new (instanceType)() as any
     }
 
     public static registerRoute(targetPrototype: any, httpMethod: HttpMethod, path: string, actionKey: string) {
@@ -37,6 +39,12 @@ export class Router {
         this.controllers[key].addRoute(new Route(httpMethod, path, actionKey))
     }
 
+    private static respond(res: Response, response: any) {
+        if (response instanceof BaubleResponse) {
+            res.status(response.statusCode)
+            res.json(response.response)
+        }
+    }
 
     public static bindRoutes(app: Express) {
         const controllers = Router.getControllers()
@@ -46,7 +54,16 @@ export class Router {
                 let action = HttpMethod[route.method].toLowerCase()
                 let path = `${Router.fixPath(controller.basePath || '')}${Router.fixPath(route.path)}`
                 //@ts-ignore
-                app[action](path, controller.instance[route.action].bind(controller.instance))
+                app[action](path, function (req: Request, res: Response) {
+                    const result = controller.instance[route.action].apply(controller.instance, arguments)
+                    if (typeof result.then === 'function') {
+                        result.then(response => {
+                            Router.respond(res, response)
+                        })
+                    } else {
+                        Router.respond(res, result)
+                    }
+                })
             }
         }
     }
