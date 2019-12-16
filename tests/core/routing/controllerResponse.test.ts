@@ -61,6 +61,12 @@ class TController {
     response() {
         return new Response(503, 'response')
     }
+
+    @Get()
+    noResponse(req, res) {
+        res.json('noResponse')
+        return 'badResponse'
+    }
 }
 
 let app = express()
@@ -141,5 +147,11 @@ describe('controller responses', () => {
         await request(server)
             .get('/response')
             .expect(503, '"response"')
+    })
+
+    it('noResponse', async () => {
+        await request(server)
+            .get('/noResponse')
+            .expect(200, '"noResponse"')
     })
 })

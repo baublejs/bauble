@@ -6,9 +6,13 @@ import { Response, Request } from "express-serve-static-core"
 import { Response as BaubleResponse } from './response/response'
 const Symbol = require('es6-symbol')
 
-function* getKeyIndex() {
+const keyGenerator = (function*() {
     let i = 0
     while (true) yield ++i
+})()
+
+function getKeyIndex() {
+    return keyGenerator.next().value
 }
 
 /**
