@@ -1,9 +1,9 @@
-import { Bauble, Controller } from '../../../packages/core/src/index'
+import { Bauble, Controller } from '../../../packages/routing/src/index'
 import * as express from 'express'
 import * as request from 'supertest'
 import { Server } from 'http'
-import { Get } from '../../../packages/core/src/routing/route/route.decorator'
-import { ok, created, noContent, notModified, badRequest, unauthorized, forbidden, notFound, conflict, internalServerError, Response } from '../../../packages/core/src/routing/response/response'
+import { Get } from '../../../packages/routing/src/routing/route/route.decorator'
+import { ok, created, noContent, notModified, badRequest, unauthorized, forbidden, notFound, conflict, internalServerError, Response } from '../../../packages/routing/src/routing/response/response'
 
 @Controller()
 class TController {

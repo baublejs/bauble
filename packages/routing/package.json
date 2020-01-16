@@ -1,5 +1,5 @@
 {
-  "name": "@bauble/core",
+  "name": "@bauble/routing",
   "version": "0.0.1",
   "description": "",
   "main": "./dist/commonjs/index.js",
@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/baublejs/bauble/issues"
   },
-  "homepage": "https://github.com/baublejs/bauble/tree/master/packages/core#readme",
+  "homepage": "https://github.com/baublejs/bauble/tree/master/packages/routing#readme",
   "devDependencies": {
     "@types/express": "^4.17.2",
     "@types/jest": "^24.0.23",

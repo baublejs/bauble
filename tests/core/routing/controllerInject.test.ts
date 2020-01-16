@@ -1,8 +1,8 @@
-import { Bauble, Controller, Route, HttpMethod } from '../../../packages/core/src/index'
+import { Bauble, Controller, Route, HttpMethod } from '../../../packages/routing/src/index'
 import * as express from 'express'
 import * as request from 'supertest'
 import { Server } from 'http'
-import { Injectable } from '../../../packages/core/src/inject'
+import { Injectable } from '../../../packages/routing/src/inject'
 
 @Injectable()
 class TInjectable {

@@ -1,4 +1,4 @@
-import { Injectable, Injector } from "../../../packages/core/src/inject";
+import { Injectable, Injector } from "../../../packages/routing/src/inject";
 
 @Injectable()
 class TInjectable {

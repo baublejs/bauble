@@ -1,4 +1,4 @@
-# @bauble/core
+# @bauble/routing
 
 Controllers and route decorators for express
 

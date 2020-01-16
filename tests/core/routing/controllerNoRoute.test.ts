@@ -1,4 +1,4 @@
-import { Bauble, Controller } from '../../../packages/core/src/index'
+import { Bauble, Controller } from '../../../packages/routing/src/index'
 import * as express from 'express'
 import * as request from 'supertest'
 import { Server } from 'http'
