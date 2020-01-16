@@ -1,4 +1,3 @@
-
 /**
  * js-injectable helper
  * 

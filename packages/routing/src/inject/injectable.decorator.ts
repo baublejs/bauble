@@ -76,8 +76,6 @@ function Inject(options: IInjectableOptionsDefaulted, constructor: Function) {
 export function Injectable(options?: IInjectableOptions) {
     const opts: IInjectableOptionsDefaulted = InjectService.getOptions(options, defaultOptions)
     return function(constructor: Function) {
-        InjectService.setKey(<any>constructor)
-
         if (opts.inject === true) {
             constructor = Inject(opts, constructor)
         }

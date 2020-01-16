@@ -1,32 +1,10 @@
-const Symbol = require('es6-symbol')
-import { KeyProperty } from "./constants"
-
-let keyIndex = 0
-
 /**
  * A type that we can instantiate. Returns T
  */
 export type NewableType<T> = {new(...args: any[]): T}
 
 export abstract class InjectService {
-    private static injectables: any = {}
-
-    private static readonly SYMBOL_ID = Symbol('Id')
-
-    /**
-     * Set the key a of a newable type
-     * 
-     * @param {NewableType<any>} instanceType Newable instance type
-     * 
-     * @memberOf InjectService
-     */
-    public static setKey(instanceType: NewableType<any>): void {
-        (<any>instanceType)[KeyProperty] = InjectService.getKey(<any>instanceType)
-    }
-
-    public static getKey(target: Function): string {
-        return (<any>target)[KeyProperty] || ++keyIndex
-    }
+    private static injectables: Map<any, any> = new Map()
 
     /**
      * Get an instance of an injectable
@@ -38,12 +16,13 @@ export abstract class InjectService {
      * @memberOf InjectService
      */
     public static get<T>(instanceType: NewableType<T>): T | undefined {
-        const key = (<any>instanceType)[this.SYMBOL_ID]
-        if (this.injectables[key] != null) {
-            if (typeof this.injectables[key] === 'function') {
-                return this.injectables[key] = new (this.injectables[key])()
+        if (this.injectables.has(instanceType)) {
+            let injectable = this.injectables.get(instanceType)
+            if (typeof injectable === 'function') {
+                injectable = new (injectable)()
+                this.injectables.set(instanceType, injectable)
             }
-            return this.injectables[key]
+            return injectable
         }
         return undefined
     }
@@ -57,9 +36,7 @@ export abstract class InjectService {
      * @memberOf InjectService
      */
     public static register<T extends Function>(instanceType: NewableType<T>) {
-        const key = (<any>instanceType)[this.SYMBOL_ID] || Symbol(InjectService.getKey(instanceType))
-        ;(<any>instanceType)[this.SYMBOL_ID] = key
-        this.injectables[key] = instanceType
+        this.injectables.set(instanceType, instanceType)
     }
 
     public static getOptions<T, TReturn>(options: T, defaults: T): TReturn {
