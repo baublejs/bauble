@@ -1,8 +1,15 @@
-import { Injectable, Injector } from "../../../packages/routing/src/inject";
+import { Injectable, Injector } from '@bauble/inject'
 
 @Injectable()
+class TInjectable2 {
+    public member = {}
+}
+
+@Injectable({inject: false})
 class TInjectable {
     public member: {test?: any} = {}
+
+    constructor(public notInjected: TInjectable2) {}
 }
 
 // @ts-ignore
@@ -17,5 +24,7 @@ describe('injectables injected with bad options', () => {
         expect(t.injected).toBeDefined()
         expect(t.injected.member).toBeTruthy()
         expect(typeof t.injected.member).toEqual('object')
+
+        expect(t.injected.notInjected).toBeUndefined()
     })
 })

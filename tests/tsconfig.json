@@ -13,7 +13,11 @@
     "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
     "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
     "moduleResolution": "node",
-    "esModuleInterop": false
+    "esModuleInterop": false,
+    "baseUrl": ".",
+    "paths": {
+      "@bauble/*": ["../packages/*/src"]
+    }
   },
   "include": [
     "./"

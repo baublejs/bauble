@@ -1,4 +1,4 @@
-import { Injectable } from "../../../packages/routing/src/inject";
+import { Injectable } from '@bauble/inject'
 
 @Injectable()
 class TInjectable {

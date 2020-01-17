@@ -1,10 +1,11 @@
+const path = require('path')
 module.exports = {
     transform: { '^.+\\.ts?$': 'ts-jest' },
     testEnvironment: 'node',
     testRegex: '/tests/.*\\.(test|spec)?\\.(ts|tsx)$',
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
     moduleNameMapper: {
-      '^@bauble/(.*)$': '<rootDir>/../packages/$1/src'
+      '^@bauble/(.*)$': '<rootDir>/packages/$1/src'
     },
     collectCoverageFrom: [
       "packages/**/src/**/*.{ts,js}",

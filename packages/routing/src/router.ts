@@ -4,7 +4,7 @@ import { Route } from "./route/route"
 import { Express } from "express"
 import { Response, Request } from "express-serve-static-core"
 import { Response as BaubleResponse } from './response/response'
-import { Injectable } from "../inject/injectable.decorator"
+import { Injectable } from '@bauble/inject'
 
 /**
  * A type that we can instantiate. Returns T

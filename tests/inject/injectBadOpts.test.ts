@@ -1,17 +1,18 @@
-import { Injectable, Injector } from "../../../packages/routing/src/inject";
+import { Injectable, Injector } from '@bauble/inject'
 
 @Injectable()
 class TInjectable {
     public member: {test?: any} = {}
 }
 
-@Injectable()
+// @ts-ignore
+@Injectable({exclude: null})
 class TInject {
     constructor(public injected: TInjectable) {}
 }
 
-describe('injectables injected by injector', () => {
-    it('should inject', async () => {
+describe('injectables injected with bad options', () => {
+    it('should inject with bad exclude', async () => {
         const t = Injector.inject(TInject)
         expect(t.injected).toBeDefined()
         expect(t.injected.member).toBeTruthy()

@@ -1,5 +1,5 @@
 import {Express} from "express"
-import { Router } from "./routing/router"
+import { Router } from "./router"
 
 export abstract class Bauble {
     static start(app: Express) {

@@ -1,5 +1,5 @@
 {
-  "name": "@bauble/routing",
+  "name": "@bauble/inject",
   "version": "0.0.1",
   "description": "",
   "main": "./lib/cjs/index.js",
@@ -14,20 +14,17 @@
   },
   "keywords": [
     "bauble",
-    "rest",
-    "restful",
-    "api",
-    "webapi",
-    "routing"
+    "inject",
+    "dependency",
+    "injection"
   ],
   "author": "Clint Pamperin",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/baublejs/bauble/issues"
   },
-  "homepage": "https://github.com/baublejs/bauble/tree/master/packages/routing#readme",
+  "homepage": "https://github.com/baublejs/bauble/tree/master/packages/inject#readme",
   "dependencies": {
-    "@bauble/inject": "^0.0.1",
     "es6-symbol": "^3.1.1",
     "reflect-metadata": "^0.1.13"
   }

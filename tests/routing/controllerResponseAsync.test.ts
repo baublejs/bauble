@@ -1,69 +1,67 @@
-import { Bauble, Controller } from '../../../packages/routing/src/index'
+import { Bauble, Controller, Get, ok, created, noContent, notModified, badRequest, unauthorized, forbidden, notFound, conflict, internalServerError, Response } from '@bauble/routing'
 import * as express from 'express'
 import * as request from 'supertest'
 import { Server } from 'http'
-import { Get } from '../../../packages/routing/src/routing/route/route.decorator'
-import { ok, created, noContent, notModified, badRequest, unauthorized, forbidden, notFound, conflict, internalServerError, Response } from '../../../packages/routing/src/routing/response/response'
 
 @Controller()
 class TController {
     @Get()
-    ok() {
+    async ok() {
         return ok('ok')
     }
 
     @Get()
-    created() {
+    async created() {
         return created('created')
     }
 
     @Get()
-    noContent() {
+    async noContent() {
         return noContent()
     }
 
     @Get()
-    notModified() {
+    async notModified() {
         return notModified()
     }
 
     @Get()
-    badRequest() {
+    async badRequest() {
         return badRequest('badRequest')
     }
 
     @Get()
-    unauthorized() {
+    async unauthorized() {
         return unauthorized('unauthorized')
     }
 
     @Get()
-    forbidden() {
+    async forbidden() {
         return forbidden('forbidden')
     }
 
     @Get()
-    notFound() {
+    async notFound() {
         return notFound('notFound')
     }
 
     @Get()
-    conflict() {
+    async conflict() {
         return conflict('conflict')
     }
 
     @Get()
-    internalServerError() {
+    async internalServerError() {
         return internalServerError('internalServerError')
     }
 
     @Get()
-    response() {
+    async response() {
         return new Response(503, 'response')
     }
 
     @Get()
-    noResponse(req, res) {
+    async noResponse(req, res) {
         res.json('noResponse')
         return 'badResponse'
     }

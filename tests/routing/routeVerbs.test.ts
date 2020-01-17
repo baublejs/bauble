@@ -1,8 +1,7 @@
-import { Bauble, Controller } from '../../../packages/routing/src/index'
+import { Bauble, Controller, Get, Put, Patch, Post, Delete } from '@bauble/routing'
 import * as express from 'express'
 import * as request from 'supertest'
 import { Server } from 'http'
-import { Get, Put, Patch, Post, Delete } from '../../../packages/routing/src/routing/route/route.decorator'
 
 @Controller()
 class TController {
