@@ -27,9 +27,10 @@ jobs:
       run: |
         npm ci
         npm run build --if-present
-        cd packages/routing
+        cd packages
+        cd ../routing
         npm ci
-        cd packages/inject
+        cd ../inject
         npm ci
         cd ../../
         npm test
